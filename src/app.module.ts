@@ -6,12 +6,17 @@ import {
 } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
+
+import { join } from 'path';
 
 import { AppKeyMiddleware, JwtMiddleware } from '@middlewares';
 import { EnvConfiguration, JoiValidationSchema } from '@config';
 import { AuthModule } from '@auth/auth.module';
 import { JwtService } from '@auth/services/jwt.service';
 import { SharedModule } from '@shared/shared.module';
+import { HelloWordModule } from './modules/hello-word/hello-word.module';
 
 @Module({
   imports: [
@@ -31,8 +36,13 @@ import { SharedModule } from '@shared/shared.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+    }),
     AuthModule,
     SharedModule,
+    HelloWordModule,
   ],
   controllers: [],
   providers: [JwtService],
