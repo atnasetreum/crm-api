@@ -18,8 +18,13 @@
     "noFallthroughCasesInSwitch": false,
     "baseUrl": "./src",
     "paths": {
-      // "@config": ["config"],
-      //"@shared/*": ["shared/*"]
+      "@config": ["config"],
+      "@constants": ["constants"],
+      "@middlewares": ["middlewares"],
+      "@auth/*": ["auth/*"],
+      "@prisma/*": ["prisma/*"],
+      "@shared/*": ["shared/*"],
+      "@modules/*": ["modules/*"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true
