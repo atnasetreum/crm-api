@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:14.3
+    restart: always
+    ports:
+      - '5432:5432'
+    environment:
+      - TZ:America/Mexico_City
+      - PGTZ:America/Mexico_City
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_PORT=${DB_PORT}
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    container_name: crm_container_dev
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
