@@ -15,15 +15,19 @@ export class ClientService {
 
   async create(createClientInput: CreateClientInput): Promise<Client> {
     const newClient = this.clientRepository.create(createClientInput);
+
     return this.clientRepository.save(newClient);
   }
 
   findAll(): Promise<Client[]> {
-    return this.clientRepository.find({});
+    return this.clientRepository.find({ where: { isActive: true } });
   }
 
   async findOne(id: number): Promise<Client> {
-    const client = await this.clientRepository.findOneBy({ id });
+    const client = await this.clientRepository.findOneBy({
+      id,
+      isActive: true,
+    });
 
     if (!client) throw new NotFoundException(`Client #${id} not found`);
 
@@ -34,13 +38,18 @@ export class ClientService {
     id: number,
     updateClientInput: UpdateClientInput,
   ): Promise<Client> {
-    const client = await this.findOne(id);
-    return this.clientRepository.save({ ...client, ...updateClientInput });
+    await this.findOne(id);
+
+    const updateClient = await this.clientRepository.preload(updateClientInput);
+
+    return this.clientRepository.save(updateClient);
   }
 
   async remove(id: number): Promise<Client> {
-    await this.findOne(id);
+    const client = await this.findOne(id);
+
     await this.clientRepository.update(id, { isActive: false });
-    return this.findOne(id);
+
+    return client;
   }
 }

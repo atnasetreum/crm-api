@@ -18,6 +18,7 @@ import { AuthModule } from '@auth/auth.module';
 import { JwtService } from '@auth/services/jwt.service';
 import { SharedModule } from '@shared/shared.module';
 import { ClientModule } from './modules/client/client.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { ClientModule } from './modules/client/client.module';
     AuthModule,
     SharedModule,
     ClientModule,
+    UserModule,
   ],
   controllers: [],
   providers: [JwtService],
