@@ -17,7 +17,7 @@ import { EnvConfiguration, JoiValidationSchema } from '@config';
 import { AuthModule } from '@auth/auth.module';
 import { JwtService } from '@auth/services/jwt.service';
 import { SharedModule } from '@shared/shared.module';
-import { HelloWordModule } from './modules/hello-word/hello-word.module';
+import { ClientModule } from './modules/client/client.module';
 
 @Module({
   imports: [
@@ -45,7 +45,7 @@ import { HelloWordModule } from './modules/hello-word/hello-word.module';
     }),
     AuthModule,
     SharedModule,
-    HelloWordModule,
+    ClientModule,
   ],
   controllers: [],
   providers: [JwtService],
