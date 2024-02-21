@@ -25,13 +25,26 @@ export class UserService {
     });
   }
 
+  async findOneByEmail(email: string) {
+    const user = await this.userRepository.findOneBy({
+      email,
+      isActive: true,
+    });
+
+    if (!user)
+      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
+
+    return user;
+  }
+
   async findOne(id: number) {
     const user = await this.userRepository.findOneBy({
       id,
       isActive: true,
     });
 
-    if (!user) throw new NotFoundException(`User #${id} not found`);
+    if (!user)
+      throw new NotFoundException(`Usuario con id ${id} no encontrado`);
 
     return user;
   }

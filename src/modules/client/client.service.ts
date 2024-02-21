@@ -29,7 +29,8 @@ export class ClientService {
       isActive: true,
     });
 
-    if (!client) throw new NotFoundException(`Client #${id} not found`);
+    if (!client)
+      throw new NotFoundException(`Cliente con id ${id} no encontrado`);
 
     return client;
   }

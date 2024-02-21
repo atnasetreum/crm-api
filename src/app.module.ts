@@ -43,6 +43,7 @@ import { UserModule } from './modules/user/user.module';
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       playground: false,
       plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      context: ({ req, res }) => ({ req, res }),
     }),
     AuthModule,
     SharedModule,

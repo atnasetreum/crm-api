@@ -1,20 +1,16 @@
-import {
-  Inject,
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
-import { REQUEST } from '@nestjs/core';
+//import { REQUEST } from '@nestjs/core';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
-import { Request } from 'express';
+//import { Request } from 'express';
 import { serialize } from 'cookie';
 import * as argon2 from 'argon2';
 
-import { ENV_PRODUCTION } from '@constants';
+import { UserService } from '@modules/user/user.service';
 import { SharedService } from '@shared/shared.service';
+import { ENV_PRODUCTION } from '@constants';
+import { LoginAuthInput } from './inputs/login-auth.input';
 import { JwtService } from './services/jwt.service';
-import { LoginAuthDto } from './dto/login-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -22,10 +18,11 @@ export class AuthService {
   environment: string;
 
   constructor(
-    private readonly jwtService: JwtService,
-    @Inject(REQUEST) private readonly request: Request,
+    //@Inject(REQUEST) private readonly request: Request,
     private readonly configService: ConfigService,
+    private readonly jwtService: JwtService,
     private readonly sharedService: SharedService,
+    private readonly userService: UserService,
   ) {
     this.environment = this.configService.get<string>('environment');
     this.nameCookie = 'token';
@@ -42,16 +39,10 @@ export class AuthService {
     };
   }
 
-  async login(loginAuthDto: LoginAuthDto): Promise<string> {
-    const { email, password } = loginAuthDto;
+  async login(loginAuthInput: LoginAuthInput) {
+    const { email, password } = loginAuthInput;
 
-    const user = {
-      id: 1,
-      password: 'password',
-    };
-
-    if (!user)
-      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
+    const user = await this.userService.findOneByEmail(email);
 
     const passwordClean = this.sharedService.decryptPassword(password);
 
@@ -67,28 +58,5 @@ export class AuthService {
     });
 
     return serialized;
-  }
-
-  async logout(): Promise<string> {
-    const token = this.request['user'].token as string;
-
-    const serialized = serialize(this.nameCookie, token, {
-      ...this.optsSerialize,
-      maxAge: 0,
-    });
-
-    return serialized;
-  }
-
-  checkToken(): {
-    message: string;
-  } {
-    const token = this.request.headers['authorization'].split(' ')[1];
-    try {
-      this.jwtService.verify(token);
-      return { message: 'Token válido.' };
-    } catch (error) {
-      throw new UnauthorizedException('Token no válido');
-    }
   }
 }
