@@ -6,7 +6,7 @@ import {
 
 import { Request, Response, NextFunction } from 'express';
 
-import { JwtService } from '@auth/services/jwt.service';
+import { JwtService } from '@auth/jwt.service';
 
 @Injectable()
 export class JwtMiddleware implements NestMiddleware {

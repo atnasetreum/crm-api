@@ -32,7 +32,9 @@ export class UserService {
     });
 
     if (!user)
-      throw new NotFoundException(`Usuario con email ${email} no encontrado`);
+      throw new NotFoundException(
+        `Usuario con correo electrónico ${email}, no existe.`,
+      );
 
     return user;
   }

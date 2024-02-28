@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 
 import * as jwt from 'jsonwebtoken';
 
-import { SharedService } from 'shared/shared.service';
+import { expiresIn } from '@utils';
 
 interface JwtPayload {
   userId: number;
@@ -15,16 +15,13 @@ interface JwtPayload {
 export class JwtService {
   secretKey: string;
 
-  constructor(
-    private readonly configService: ConfigService,
-    private readonly sharedService: SharedService,
-  ) {
+  constructor(private readonly configService: ConfigService) {
     this.secretKey = this.configService.get<string>('jwt.secretKey');
   }
 
   create(userId: number): string {
     const token = jwt.sign({ userId }, this.secretKey, {
-      expiresIn: this.sharedService.expiresIn(),
+      expiresIn: expiresIn(),
     });
     return token;
   }

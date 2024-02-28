@@ -24,7 +24,8 @@
       "@auth/*": ["auth/*"],
       "@prisma/*": ["prisma/*"],
       "@shared/*": ["shared/*"],
-      "@modules/*": ["modules/*"]
+      "@modules/*": ["modules/*"],
+      "@utils": ["utils"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true

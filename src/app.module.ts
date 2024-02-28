@@ -15,7 +15,7 @@ import { join } from 'path';
 import { AppKeyMiddleware, JwtMiddleware } from '@middlewares';
 import { EnvConfiguration, JoiValidationSchema } from '@config';
 import { AuthModule } from '@auth/auth.module';
-import { JwtService } from '@auth/services/jwt.service';
+import { JwtService } from '@auth/jwt.service';
 import { SharedModule } from '@shared/shared.module';
 import { ClientModule } from './modules/client/client.module';
 import { UserModule } from './modules/user/user.module';
