@@ -79,12 +79,10 @@ export class AuthService {
     return serialized;
   }
 
-  checkToken(): {
-    message: string;
-  } {
+  async checkToken(): Promise<{ message: string }> {
     const token = this.request.headers['authorization'].split(' ')[1];
     try {
-      this.jwtService.verify(token);
+      await this.jwtService.verify(token);
       return { message: 'Token válido.' };
     } catch (error) {
       throw new UnauthorizedException('Token no válido');

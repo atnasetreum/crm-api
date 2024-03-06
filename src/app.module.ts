@@ -4,7 +4,7 @@ import {
   NestModule,
   RequestMethod,
 } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
@@ -38,12 +38,43 @@ import { UserModule } from './modules/user/user.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      playground: false,
-      plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      context: ({ req, res }) => ({ req, res }),
+      //autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      //playground: false,
+      //plugins: [ApolloServerPluginLandingPageLocalDefault()],
+      //context: ({ req, res }) => ({ req, res }),
+      imports: [ConfigModule, AuthModule],
+      inject: [ConfigService, JwtService],
+      useFactory: (configService: ConfigService, jwtService: JwtService) => ({
+        playground: false,
+        autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        plugins: [ApolloServerPluginLandingPageLocalDefault()],
+        introspection: true,
+        async context({ req }) {
+          const appKey = configService.get<string>('appKey');
+
+          const appKeyHeader = req.headers['x-app-key'];
+
+          if (!appKeyHeader) {
+            throw Error('API Key es requerido');
+          }
+
+          if (appKeyHeader !== appKey) {
+            throw Error('API Key es inválido');
+          }
+
+          const token = req.cookies['token'] ? `${req.cookies['token']}` : '';
+
+          try {
+            const user = await jwtService.verify(token);
+            req['user'] = { ...user };
+            return { request: req };
+          } catch (error) {
+            throw Error('Credenciales no válidas');
+          }
+        },
+      }),
     }),
     AuthModule,
     SharedModule,
@@ -54,7 +85,7 @@ import { UserModule } from './modules/user/user.module';
   providers: [JwtService],
 })
 export class AppModule implements NestModule {
-  public configure(consumer: MiddlewareConsumer): void {
+  configure(consumer: MiddlewareConsumer): void {
     consumer.apply(AppKeyMiddleware).forRoutes('*');
     consumer
       .apply(JwtMiddleware)

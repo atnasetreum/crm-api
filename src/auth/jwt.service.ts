@@ -4,6 +4,8 @@ import { ConfigService } from '@nestjs/config';
 import * as jwt from 'jsonwebtoken';
 
 import { expiresIn } from '@utils';
+import { User } from '@modules/user/entities/user.entity';
+import { UserService } from '@modules/user/user.service';
 
 interface JwtPayload {
   userId: number;
@@ -15,7 +17,10 @@ interface JwtPayload {
 export class JwtService {
   secretKey: string;
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly userService: UserService,
+  ) {
     this.secretKey = this.configService.get<string>('jwt.secretKey');
   }
 
@@ -26,8 +31,10 @@ export class JwtService {
     return token;
   }
 
-  verify(token: string): JwtPayload {
+  async verify(token: string): Promise<User> {
     const decoded: JwtPayload = jwt.verify(token, this.secretKey);
-    return decoded;
+    const userId = decoded.userId;
+    const user = await this.userService.findOne(userId);
+    return user;
   }
 }

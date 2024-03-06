@@ -13,7 +13,9 @@ export class AppKeyMiddleware implements NestMiddleware {
 
   use(req: Request, res: Response, next: NextFunction) {
     res.statusCode;
+
     const appKeyHeader = req.headers['x-app-key'];
+
     const appKey = this.configService.get<string>('appKey');
 
     if (!appKeyHeader) {

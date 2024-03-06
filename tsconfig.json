@@ -25,7 +25,8 @@
       "@prisma/*": ["prisma/*"],
       "@shared/*": ["shared/*"],
       "@modules/*": ["modules/*"],
-      "@utils": ["utils"]
+      "@utils": ["utils"],
+      "@decorators": ["decorators"]
     },
     "noUnusedLocals": true,
     "noUnusedParameters": true
