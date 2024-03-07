@@ -40,10 +40,6 @@ import { UserModule } from './modules/user/user.module';
     }),
     GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
-      //autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      //playground: false,
-      //plugins: [ApolloServerPluginLandingPageLocalDefault()],
-      //context: ({ req, res }) => ({ req, res }),
       imports: [ConfigModule, AuthModule],
       inject: [ConfigService, JwtService],
       useFactory: (configService: ConfigService, jwtService: JwtService) => ({
@@ -64,7 +60,17 @@ import { UserModule } from './modules/user/user.module';
             throw Error('API Key es inválido');
           }
 
-          const token = req.cookies['token'] ? `${req.cookies['token']}` : '';
+          let token = '';
+
+          token = req.cookies['token'] ? `${req.cookies['token']}` : '';
+
+          if (!token) {
+            token = `${req.headers['authorization']}`.split('Bearer ')[1] || '';
+          }
+
+          if (!token) {
+            throw Error('Token no encontrado');
+          }
 
           try {
             const user = await jwtService.verify(token);

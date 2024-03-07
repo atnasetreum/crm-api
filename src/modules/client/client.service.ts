@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 
 import { CreateClientInput, UpdateClientInput } from './inputs';
 import { Client } from './entities/client.entity';
+import { PaginationArgs } from './inputs/args';
 
 @Injectable()
 export class ClientService {
@@ -19,8 +20,36 @@ export class ClientService {
     return this.clientRepository.save(newClient);
   }
 
-  findAll(): Promise<Client[]> {
-    return this.clientRepository.find({ where: { isActive: true } });
+  async findAll(paginationArgs: PaginationArgs): Promise<{
+    data: Client[];
+    count: number;
+  }> {
+    const { limit, page } = paginationArgs;
+
+    const where = {
+      isActive: true,
+    };
+
+    const numRows = await this.clientRepository.count({
+      where,
+    });
+
+    const limitNumber = Number(limit);
+
+    const numPerPage = limitNumber;
+    // const numPages = Math.ceil(numRows / numPerPage);
+    const skip = (Number(page) - 1) * numPerPage;
+
+    const clients = await this.clientRepository.find({
+      where,
+      ...(limitNumber === -1 ? {} : { take: limitNumber }),
+      ...(limitNumber === -1 ? {} : { skip }),
+      order: {
+        id: 'DESC',
+      },
+    });
+
+    return { data: clients, count: numRows };
   }
 
   async findOne(id: number): Promise<Client> {

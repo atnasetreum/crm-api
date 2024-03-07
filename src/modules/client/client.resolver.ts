@@ -3,6 +3,8 @@ import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 import { CreateClientInput, UpdateClientInput } from './inputs';
 import { ClientService } from './client.service';
 import { Client } from './entities/client.entity';
+import { AggregationsType } from './types';
+import { PaginationArgs } from './inputs/args';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -15,9 +17,12 @@ export class ClientResolver {
     return this.clientService.create(createClientInput);
   }
 
-  @Query(() => [Client], { name: 'clients' })
-  findAll(): Promise<Client[]> {
-    return this.clientService.findAll();
+  @Query(() => AggregationsType, { name: 'clients' })
+  findAll(@Args() paginationArgs: PaginationArgs): Promise<{
+    data: Client[];
+    count: number;
+  }> {
+    return this.clientService.findAll(paginationArgs);
   }
 
   @Query(() => Client, { name: 'client' })
