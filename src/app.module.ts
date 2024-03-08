@@ -19,6 +19,9 @@ import { JwtService } from '@auth/jwt.service';
 import { SharedModule } from '@shared/shared.module';
 import { ClientModule } from './modules/client/client.module';
 import { UserModule } from './modules/user/user.module';
+import { ProjectModule } from './modules/project/project.module';
+import { AuditModule } from './modules/audit/audit.module';
+import { StateModule } from './modules/state/state.module';
 
 @Module({
   imports: [
@@ -86,6 +89,9 @@ import { UserModule } from './modules/user/user.module';
     SharedModule,
     ClientModule,
     UserModule,
+    ProjectModule,
+    AuditModule,
+    StateModule,
   ],
   controllers: [],
   providers: [JwtService],

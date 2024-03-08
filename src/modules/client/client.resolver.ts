@@ -1,10 +1,12 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 
+import { CurrentUser } from '@decorators';
+import { User } from '@modules/user/entities/user.entity';
 import { CreateClientInput, UpdateClientInput } from './inputs';
 import { ClientService } from './client.service';
 import { Client } from './entities/client.entity';
-import { AggregationsType } from './types';
-import { PaginationArgs } from './inputs/args';
+import { AggregationsClientType } from './types';
+import { ParamsArgs } from './inputs/args';
 
 @Resolver(() => Client)
 export class ClientResolver {
@@ -13,16 +15,17 @@ export class ClientResolver {
   @Mutation(() => Client)
   createClient(
     @Args('createClientInput') createClientInput: CreateClientInput,
+    @CurrentUser() currentUser: User,
   ): Promise<Client> {
-    return this.clientService.create(createClientInput);
+    return this.clientService.create(createClientInput, currentUser);
   }
 
-  @Query(() => AggregationsType, { name: 'clients' })
-  findAll(@Args() paginationArgs: PaginationArgs): Promise<{
+  @Query(() => AggregationsClientType, { name: 'clients' })
+  findAll(@Args() paramsArgs: ParamsArgs): Promise<{
     data: Client[];
     count: number;
   }> {
-    return this.clientService.findAll(paginationArgs);
+    return this.clientService.findAll(paramsArgs);
   }
 
   @Query(() => Client, { name: 'client' })
@@ -33,12 +36,20 @@ export class ClientResolver {
   @Mutation(() => Client)
   updateClient(
     @Args('updateClientInput') updateClientInput: UpdateClientInput,
+    @CurrentUser() currentUser: User,
   ): Promise<Client> {
-    return this.clientService.update(updateClientInput.id, updateClientInput);
+    return this.clientService.update(
+      updateClientInput.id,
+      updateClientInput,
+      currentUser,
+    );
   }
 
   @Mutation(() => Client)
-  removeClient(@Args('id', { type: () => Int }) id: number): Promise<Client> {
-    return this.clientService.remove(id);
+  removeClient(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() currentUser: User,
+  ): Promise<Client> {
+    return this.clientService.remove(id, currentUser);
   }
 }

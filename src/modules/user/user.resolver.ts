@@ -1,22 +1,30 @@
 import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
 
+import { CurrentUser } from '@decorators';
 import { CreateUserInput, UpdateUserInput } from './inputs';
 import { UserService } from './user.service';
 import { User } from './entities/user.entity';
-import { CurrentUser } from '@decorators';
+import { AggregationsUserType } from './types';
+import { ParamsArgs } from './inputs/args';
 
 @Resolver(() => User)
 export class UserResolver {
   constructor(private readonly userService: UserService) {}
 
   @Mutation(() => User)
-  createUser(@Args('createUserInput') createUserInput: CreateUserInput) {
-    return this.userService.create(createUserInput);
+  createUser(
+    @Args('createUserInput') createUserInput: CreateUserInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.userService.create(createUserInput, currentUser);
   }
 
-  @Query(() => [User], { name: 'users' })
-  findAll() {
-    return this.userService.findAll();
+  @Query(() => AggregationsUserType, { name: 'users' })
+  findAll(@Args() paramsArgs: ParamsArgs): Promise<{
+    data: User[];
+    count: number;
+  }> {
+    return this.userService.findAll(paramsArgs);
   }
 
   @Query(() => User, { name: 'user' })
@@ -34,12 +42,22 @@ export class UserResolver {
   }
 
   @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
-    return this.userService.update(updateUserInput.id, updateUserInput);
+  updateUser(
+    @Args('updateUserInput') updateUserInput: UpdateUserInput,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.userService.update(
+      updateUserInput.id,
+      updateUserInput,
+      currentUser,
+    );
   }
 
   @Mutation(() => User)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
-    return this.userService.remove(id);
+  removeUser(
+    @Args('id', { type: () => Int }) id: number,
+    @CurrentUser() currentUser: User,
+  ) {
+    return this.userService.remove(id, currentUser);
   }
 }

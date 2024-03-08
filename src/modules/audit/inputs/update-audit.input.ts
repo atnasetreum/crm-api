@@ -2,10 +2,10 @@ import { InputType, Field, PartialType, ID } from '@nestjs/graphql';
 
 import { IsPositive } from 'class-validator';
 
-import { CreateClientInput } from './create-client.input';
+import { CreateAuditInput } from './create-audit.input';
 
 @InputType()
-export class UpdateClientInput extends PartialType(CreateClientInput) {
+export class UpdateAuditInput extends PartialType(CreateAuditInput) {
   @IsPositive()
   @Field(() => ID)
   id: number;

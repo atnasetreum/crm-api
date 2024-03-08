@@ -1,36 +1,34 @@
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import * as argon2 from 'argon2';
 
-import { Audit } from '@modules/audit/entities/audit.entity';
+import { User } from '@modules/user/entities/user.entity';
 
-@Entity({ name: 'users' })
+@Entity({ name: 'audits' })
 @ObjectType()
-export class User {
+export class Audit {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id: number;
 
   @Column()
   @Field(() => String)
-  name: string;
-
-  @Column({ unique: true })
-  @Field(() => String)
-  email: string;
+  message: string;
 
   @Column()
-  password: string;
+  @Field(() => String)
+  action: string;
+
+  @Column()
+  @Field(() => String)
+  category: string;
 
   @Column({ default: true })
   @Field(() => Boolean, { defaultValue: true, nullable: true })
@@ -44,12 +42,6 @@ export class User {
   @Field(() => Date)
   updatedAt: Date;
 
-  @OneToMany(() => Audit, (audit) => audit.user)
-  audits: Audit[];
-
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    this.password = await argon2.hash(this.password);
-  }
+  @ManyToOne(() => User, (user) => user.audits)
+  user: User;
 }

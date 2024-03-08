@@ -5,7 +5,7 @@ import { Client } from '../entities/client.entity';
 @ObjectType({
   description: 'Clients aggregation type',
 })
-export class AggregationsType {
+export class AggregationsClientType {
   @Field(() => Int)
   count: number;
 
