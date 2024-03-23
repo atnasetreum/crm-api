@@ -95,7 +95,7 @@ export class ProjectService {
     const updateProject =
       await this.projectRepository.preload(updateProjectInput);
 
-    const user = await this.projectRepository.save(updateProject);
+    const project = await this.projectRepository.save(updateProject);
 
     const { id: idUpdate, ...rest } = updateProjectInput;
 
@@ -106,7 +106,7 @@ export class ProjectService {
       user: currentUser,
     });
 
-    return user;
+    return project;
   }
 
   async remove(id: number, currentUser: User): Promise<Project> {

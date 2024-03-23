@@ -14,6 +14,7 @@ import {
 
 import { Project } from '@modules/project/entities/project.entity';
 import { State } from '@modules/state/entities/state.entity';
+import { Origin } from '@modules/origin/entities/origin.entity';
 
 @Entity({ name: 'clients' })
 @ObjectType()
@@ -44,10 +45,6 @@ export class Client {
 
   @Column({ nullable: true, default: '' })
   @Field(() => String, { nullable: true, defaultValue: '' })
-  origin?: string;
-
-  @Column({ nullable: true, default: '' })
-  @Field(() => String, { nullable: true, defaultValue: '' })
   campaignType?: string;
 
   @Column({ default: true })
@@ -75,4 +72,11 @@ export class Client {
   })
   @Field(() => State)
   state: State;
+
+  @OneToOne(() => Origin)
+  @JoinColumn({
+    name: 'origins_states',
+  })
+  @Field(() => Origin)
+  origin: Origin;
 }

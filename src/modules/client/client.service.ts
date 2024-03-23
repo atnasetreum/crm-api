@@ -10,6 +10,7 @@ import { State } from '@modules/state/entities/state.entity';
 import { CreateClientInput, UpdateClientInput } from './inputs';
 import { Client } from './entities/client.entity';
 import { ParamsArgs } from './inputs/args';
+import { Origin } from '@modules/origin/entities/origin.entity';
 
 @Injectable()
 export class ClientService {
@@ -22,13 +23,15 @@ export class ClientService {
     private readonly projectRepository: Repository<Project>,
     @InjectRepository(State)
     private readonly stateRepository: Repository<State>,
+    @InjectRepository(Origin)
+    private readonly originRepository: Repository<Origin>,
   ) {}
 
   async create(
     createClientInput: CreateClientInput,
     currentUser: User,
   ): Promise<Client> {
-    const { projectIds, stateId, ...rest } = createClientInput;
+    const { projectIds, stateId, originId, ...rest } = createClientInput;
 
     const projects = await this.projectRepository.find({
       where: {
@@ -44,9 +47,17 @@ export class ClientService {
       },
     });
 
+    const origin = await this.originRepository.findOne({
+      where: {
+        id: originId,
+        isActive: true,
+      },
+    });
+
     const newClient = this.clientRepository.create({
       ...rest,
       state,
+      origin,
       projects,
     });
     const client = await this.clientRepository.save(newClient);

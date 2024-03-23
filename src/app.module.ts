@@ -22,6 +22,8 @@ import { UserModule } from './modules/user/user.module';
 import { ProjectModule } from './modules/project/project.module';
 import { AuditModule } from './modules/audit/audit.module';
 import { StateModule } from './modules/state/state.module';
+import { OriginModule } from './modules/origin/origin.module';
+import { CampaignModule } from './modules/campaign/campaign.module';
 
 @Module({
   imports: [
@@ -92,6 +94,8 @@ import { StateModule } from './modules/state/state.module';
     ProjectModule,
     AuditModule,
     StateModule,
+    OriginModule,
+    CampaignModule,
   ],
   controllers: [],
   providers: [JwtService],

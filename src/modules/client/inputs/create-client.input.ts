@@ -40,11 +40,6 @@ export class CreateClientInput {
   @IsOptional()
   @IsString()
   @Field(() => String, { nullable: true, defaultValue: '' })
-  origin: string;
-
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true, defaultValue: '' })
   campaignType: string;
 
   @IsNotEmpty()
@@ -56,4 +51,9 @@ export class CreateClientInput {
   @IsPositive()
   @Field(() => Int)
   stateId: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @Field(() => Int)
+  originId: number;
 }
