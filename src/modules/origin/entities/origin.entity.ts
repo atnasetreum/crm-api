@@ -4,9 +4,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+
+import { Client } from '@modules/client/entities/client.entity';
 
 @Entity({ name: 'origins' })
 @ObjectType()
@@ -30,4 +33,8 @@ export class Origin {
   @UpdateDateColumn()
   @Field(() => Date)
   updatedAt: Date;
+
+  @OneToMany(() => Client, (client) => client.origin)
+  @Field(() => [Client])
+  clients: Client[];
 }

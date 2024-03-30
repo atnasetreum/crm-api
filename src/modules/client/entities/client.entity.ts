@@ -4,16 +4,15 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 
-import { Project } from '@modules/project/entities/project.entity';
 import { State } from '@modules/state/entities/state.entity';
+import { Project } from '@modules/project/entities/project.entity';
 import { Origin } from '@modules/origin/entities/origin.entity';
 
 @Entity({ name: 'clients' })
@@ -66,17 +65,11 @@ export class Client {
   @Field(() => [Project])
   projects: Project[];
 
-  @OneToOne(() => State)
-  @JoinColumn({
-    name: 'clients_states',
-  })
+  @ManyToOne(() => State, (state) => state.clients)
   @Field(() => State)
   state: State;
 
-  @OneToOne(() => Origin)
-  @JoinColumn({
-    name: 'origins_states',
-  })
+  @ManyToOne(() => Origin, (origin) => origin.clients)
   @Field(() => Origin)
   origin: Origin;
 }

@@ -1,9 +1,11 @@
+import { Client } from '@modules/client/entities/client.entity';
 import { ObjectType, Field, ID } from '@nestjs/graphql';
 
 import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,4 +32,8 @@ export class State {
   @UpdateDateColumn()
   @Field(() => Date)
   updatedAt: Date;
+
+  @OneToMany(() => Client, (client) => client.state)
+  @Field(() => [Client])
+  clients: Client[];
 }

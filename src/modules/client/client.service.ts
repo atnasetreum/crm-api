@@ -106,7 +106,7 @@ export class ClientService {
       where,
       ...(limitNumber === -1 ? {} : { take: limitNumber }),
       ...(limitNumber === -1 ? {} : { skip }),
-      relations: ['projects'],
+      relations: ['projects', 'state', 'origin'],
       order: {
         id: 'DESC',
       },
@@ -121,7 +121,7 @@ export class ClientService {
         id,
         isActive: true,
       },
-      relations: ['projects'],
+      relations: ['projects', 'state', 'origin'],
     });
 
     if (!client)
