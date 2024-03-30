@@ -11,9 +11,17 @@ import { CreateClientInput, UpdateClientInput } from './inputs';
 import { Client } from './entities/client.entity';
 import { ParamsArgs } from './inputs/args';
 import { Origin } from '@modules/origin/entities/origin.entity';
+import { Campaign } from '@modules/campaign/entities/campaign.entity';
 
 @Injectable()
 export class ClientService {
+  private readonly relations: string[] = [
+    'projects',
+    'state',
+    'origin',
+    'campaign',
+  ];
+
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
@@ -25,13 +33,16 @@ export class ClientService {
     private readonly stateRepository: Repository<State>,
     @InjectRepository(Origin)
     private readonly originRepository: Repository<Origin>,
+    @InjectRepository(Campaign)
+    private readonly campaignRepository: Repository<Campaign>,
   ) {}
 
   async create(
     createClientInput: CreateClientInput,
     currentUser: User,
   ): Promise<Client> {
-    const { projectIds, stateId, originId, ...rest } = createClientInput;
+    const { projectIds, stateId, originId, campaignId, ...rest } =
+      createClientInput;
 
     const projects = await this.projectRepository.find({
       where: {
@@ -54,11 +65,19 @@ export class ClientService {
       },
     });
 
+    const campaign = await this.campaignRepository.findOne({
+      where: {
+        id: campaignId,
+        isActive: true,
+      },
+    });
+
     const newClient = this.clientRepository.create({
       ...rest,
       state,
       origin,
       projects,
+      campaign,
     });
     const client = await this.clientRepository.save(newClient);
 
@@ -106,7 +125,7 @@ export class ClientService {
       where,
       ...(limitNumber === -1 ? {} : { take: limitNumber }),
       ...(limitNumber === -1 ? {} : { skip }),
-      relations: ['projects', 'state', 'origin'],
+      relations: this.relations,
       order: {
         id: 'DESC',
       },
@@ -121,7 +140,7 @@ export class ClientService {
         id,
         isActive: true,
       },
-      relations: ['projects', 'state', 'origin'],
+      relations: this.relations,
     });
 
     if (!client)

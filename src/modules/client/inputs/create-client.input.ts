@@ -56,4 +56,9 @@ export class CreateClientInput {
   @IsPositive()
   @Field(() => Int)
   originId: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @Field(() => Int)
+  campaignId: number;
 }

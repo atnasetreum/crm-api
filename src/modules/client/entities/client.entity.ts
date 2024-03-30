@@ -14,6 +14,7 @@ import {
 import { State } from '@modules/state/entities/state.entity';
 import { Project } from '@modules/project/entities/project.entity';
 import { Origin } from '@modules/origin/entities/origin.entity';
+import { Campaign } from '@modules/campaign/entities/campaign.entity';
 
 @Entity({ name: 'clients' })
 @ObjectType()
@@ -72,4 +73,8 @@ export class Client {
   @ManyToOne(() => Origin, (origin) => origin.clients)
   @Field(() => Origin)
   origin: Origin;
+
+  @ManyToOne(() => Campaign, (campaign) => campaign.clients)
+  @Field(() => Campaign)
+  campaign: Campaign;
 }
