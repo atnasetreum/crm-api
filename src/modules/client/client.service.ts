@@ -95,7 +95,7 @@ export class ClientService {
     data: Client[];
     count: number;
   }> {
-    const { searchParam, limit, page } = paramsArgs;
+    const { searchParam, stateId, limit, page } = paramsArgs;
 
     let where: FindOptionsWhere<Client>[] = [
       {
@@ -111,6 +111,28 @@ export class ClientService {
       ];
     }
 
+    if (stateId) {
+      where = [...where, { state: { id: stateId } }];
+    }
+
+    /*let where: FindOptionsWhere<Client> = { isActive: true };
+
+    if (searchParam) {
+      where = { ...where, name: ILike(`%${searchParam}%`) };
+      where = { ...where, phone: ILike(`%${searchParam}%`) };
+    }
+
+    if (stateId) {
+      where = { ...where, state: { id: stateId } };
+    }*/
+
+    console.log({
+      stateId,
+      where,
+      searchParam,
+      ILike,
+    });
+
     const numRows = await this.clientRepository.count({
       where,
     });
@@ -118,7 +140,7 @@ export class ClientService {
     const limitNumber = Number(limit);
 
     const numPerPage = limitNumber;
-    // const numPages = Math.ceil(numRows / numPerPage);
+
     const skip = (Number(page) - 1) * numPerPage;
 
     const clients = await this.clientRepository.find({
@@ -129,6 +151,11 @@ export class ClientService {
       order: {
         id: 'DESC',
       },
+    });
+
+    console.log({
+      numRows,
+      clients: clients.length,
     });
 
     return { data: clients, count: numRows };

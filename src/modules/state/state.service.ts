@@ -39,7 +39,7 @@ export class StateService {
     data: State[];
     count: number;
   }> {
-    const { searchParam, limit, page } = paramsArgs;
+    const { searchParam, limit, page, orderRows } = paramsArgs;
 
     let where: FindOptionsWhere<State>[] = [
       {
@@ -58,16 +58,27 @@ export class StateService {
     const limitNumber = Number(limit);
 
     const numPerPage = limitNumber;
-    // const numPages = Math.ceil(numRows / numPerPage);
+
     const skip = (Number(page) - 1) * numPerPage;
+
+    let order: {
+      [key: string]: string;
+    } = {
+      id: 'DESC',
+    };
+
+    if (orderRows) {
+      const [column, orderType] = orderRows.split(':');
+      order = {
+        [column]: orderType.toUpperCase(),
+      };
+    }
 
     const status = await this.stateRepository.find({
       where,
       ...(limitNumber === -1 ? {} : { take: limitNumber }),
       ...(limitNumber === -1 ? {} : { skip }),
-      order: {
-        id: 'DESC',
-      },
+      order,
     });
 
     return { data: status, count: numRows };

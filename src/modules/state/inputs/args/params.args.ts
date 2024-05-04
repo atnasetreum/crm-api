@@ -16,4 +16,9 @@ export class ParamsArgs {
   @IsString()
   @Field(() => String, { nullable: true })
   searchParam?: string;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  orderRows?: string;
 }

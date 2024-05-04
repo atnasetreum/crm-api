@@ -16,4 +16,9 @@ export class ParamsArgs {
   @IsString()
   @Field(() => String, { nullable: true })
   searchParam?: string;
+
+  @IsOptional()
+  @IsPositive()
+  @Field(() => Number, { nullable: true })
+  stateId?: number;
 }
